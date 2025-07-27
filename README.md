@@ -26,6 +26,3 @@ See `/media/` folder for screenshots.
 - `/prompt-memory`: Persistent system prompt used by the bot
 - `/n8n-workflows`: Exported JSON workflow for the Telegram automation
 - `/media`: Telegram bot output screenshots
-
----
-🔍 Open to 6-month internships in Agentic AI, creative automation, or LLM systems. Let's connect!
