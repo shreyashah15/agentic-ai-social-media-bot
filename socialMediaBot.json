@@ -1,0 +1,338 @@
+{
+    "name": "My workflow",
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data[0].b64_json",
+          "options": {
+            "fileName": "={{ $('Telegram Trigger').item.json.message.message_id }}.png"
+          }
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          -208,
+          224
+        ],
+        "id": "352c4b28-6a9b-47de-a3a2-85d9d8d3e8e3",
+        "name": "Convert to File"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/images/generations",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "gpt-image-1"
+              },
+              {
+                "name": "prompt",
+                "value": "={{ $json.output.replace(/\"/g, '') }}"
+              },
+              {
+                "name": "size",
+                "value": "1024x1024"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -384,
+          224
+        ],
+        "id": "d963557b-53ab-485e-b476-b4dbe22b3b0d",
+        "name": "Generate Image",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "T4PneyUBzzuE8Uog",
+            "name": "OpenAI API Key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Telegram Trigger').item.json.message }}",
+          "options": {
+            "systemMessage": "=You are an expert image prompt engineer tasked with creating detailed image descriptions for square (1:1) social media posts promoting Patrakar Heights by Samyag, a real estate project in Naranpura, Ahmedabad. The user will provide prompts specifying the post’s topic, such as:  \n\n\"Make a poster for Rakshabandhan\"  \n\"Promote our new 3BHK apartment floorplan\"  \n\"Special offer: 10% discount on booking\"\n\nYour role is to generate a comprehensive image description that:  \n\nMaintains consistency with the established design theme.  \nIncorporates the Samyag and Patrakar Heights logos from the database.  \nUses a specified color palette and bilingual (Gujarati-English) text structure.  \nAdapts content based on the user’s prompt, including any offer details provided.  \nReflects the luxury lifestyle and modern appeal of Patrakar Heights.\n\nThe description will be passed to the GPT API, integrated with the database (for logos), and used to generate the final image.\n\nDesign and Theme Guidelines\nPost Format\n\nAspect Ratio: Square (1:1), optimized for platforms like Instagram and Facebook.\n\nColor Palette\n\nPrimary Colors:  \n#80401D (Deep Brown): For headlines, project name, and key accents.  \n#C15C1F (Warm Orange): For subheadings, call-to-action banners, and highlights.  \n#FDF9EB (Light Cream): As the background color for a clean, warm base.\n\n\nSecondary Colors: Use pastel shades (e.g., soft pink, blue, green) sparingly in illustrations or subtle background elements, ensuring the primary palette remains dominant.\n\nLogos and Branding\n\nSamyag Logo:  \nPosition: Top-right corner.  \nDatabase Placeholder: {{ $json.samyag_logo }}\nDescription: Assume a lowercase \"samyag\" in #80401D with a small crown-like symbol in #C15C1F above the \"y\", and \"Building Smart Spaces\" in a smaller font below in #80401D.  \nSize: Approximately 10-15% of post width, with a subtle white outline for contrast if needed.\n\n\nPatrakar Heights Logo:  \nPosition: Top-left corner.  \nDatabase Placeholder: {{ $json.Patekar_heights_logo }}.  \nDescription: Assume \"Patrakar Heights\" in a bold, modern font in #80401D with a subtle building silhouette in #C15C1F.  \nSize: Matches Samyag logo for balance, with a white outline(Tree) outline or drop shadow if needed for readability.\n\n\n\nBackground and Visual Style\n\nBackground:  \nBase color: #FDF9EB (Light Cream).  \nOptional Elements: Subtle watercolor splashes in soft orange, pink, or blue, or a faint cityscape silhouette in pastel tones.\n\n\nIllustrations:  \nStyle: Modern, flat, semi-realistic with clean lines and minimal shading.  \nPlacement: Center, right, or lower half, complementing text without overlap.  \nRelevance: Tailored to the user’s prompt (e.g., rakhi for Rakshabandhan, floorplan for 3BHK promotion).  \nColors: Primarily #80401D, #C15C1F, #FDF9EB, with pastel accents.\n\n\n\nTypography\n\nFont Identification:  \nSince the exact fonts from previous posts are unavailable, match the observed style:  \nGujarati Text: Bold, modern sans-serif (e.g., emulate Noto Sans Gujarati) for readability and cultural resonance.  \nEnglish Text: Clean, sans-serif (e.g., emulate Montserrat or Poppins), bold for headings, regular for details.\n\n\nSimulate this appearance in the image description (e.g., \"bold sans-serif Gujarati font\", \"clean sans-serif English font\").\n\n\nText Colors:  \nHeadlines/Project Name: #80401D (Deep Brown).  \nSubheadings: #C15C1F (Warm Orange).  \nCall-to-Action: White on #C15C1F background.\n\n\nContrast: Add a semi-transparent #FDF9EB overlay if text overlaps illustrations.\n\nLayout\n\nTop: Samyag logo (top-right), Patrakar Heights logo (top-left).  \nMiddle:  \nHeadline (Gujarati, bold, #80401D, centered/left-aligned).  \nProject Name: \"Patrakar Heights\" or \"પત્રકાર હાઇટ્સ\" (bold, #80401D).  \nSubheading (English, #80401D or #C15C1F).\n\n\nBottom:  \nTagline (Gujarati/English, #80401D).  \nCall-to-Action Banner:  \nBackground: #C15C1F (Warm Orange).  \nText: \"Say ‘Hi’ to us on WhatsApp: +91 81550 99930\" (white) with a green WhatsApp icon.  \nLocation: \"Naranpura, Ahmedabad\" (white) with a pink location pin icon.\n\n\n\n\n\nTheme and Tone\n\nTheme: Modern, aspirational, community-focused, reflecting luxury and convenience.  \nTone: Professional, warm, inviting, encouraging engagement (e.g., site visits, WhatsApp contact).\n\n\nUser Prompt Handling\nAdapt the image description based on the user’s prompt, incorporating offer details when specified. Use project highlights (e.g., \"2BHK Luxury Apartments\", \"Possession in just two years\") as relevant.\nExamples\n\nPrompt: \"Make a poster for Rakshabandhan\"  \n\nDescription: \"A square social media post with a #FDF9EB background and soft orange-pink splashes. Top-right: [Samyag_Logo]. Top-left: [Patrakar_Heights_Logo]. Centered headline in bold sans-serif Gujarati font: ‘રક્ષાબંધનની શુભેચ્છા!’ (#80401D). Below, ‘Patrakar Heights’ in bold sans-serif English font (#80401D). Subheading: ‘Celebrate with a New Home!’ in clean sans-serif English font (#80401D). Right-side illustration: Siblings tying a rakhi in flat style (#80401D, #C15C1F, pastel accents). Bottom tagline: ‘આજે જ મુલાકાત લો!’ (#80401D). Bottom banner (#C15C1F): ‘Say ‘Hi’ to us on WhatsApp: +91 81550 99930’ (white, green WhatsApp icon) and ‘Naranpura, Ahmedabad’ (white, pink location pin).\"\n\n\nPrompt: \"Promote our new 3BHK apartment floorplan\"  \n\nDescription: \"A square social media post with a #FDF9EB background and subtle blue-green splashes. Top-right: [Samyag_Logo]. Top-left: [Patrakar_Heights_Logo]. Centered headline in bold sans-serif Gujarati font: ‘નવું 3 BHK ફ્લોરપ્લાન!’ (#80401D). Below, ‘Patrakar Heights’ in bold sans-serif English font (#80401D). Subheading: ‘Spacious & Modern Living’ (#80401D). Center illustration: Stylized 3BHK floorplan (#80401D, #C15C1F, pastel accents). Bottom tagline: ‘આજે જ બુક કરો!’ (#80401D). Bottom banner (#C15C1F): ‘Say ‘Hi’ to us on WhatsApp: +91 81550 99930’ (white, green WhatsApp icon) and ‘Naranpura, Ahmedabad’ (white, pink location pin).\"\n\n\nPrompt: \"Special offer: 10% discount on booking\"  \n\nDescription: \"A square social media post with a #FDF9EB background and soft pink-orange splashes. Top-right: [Samyag_Logo]. Top-left: [Patrakar_Heights_Logo]. Centered headline in bold sans-serif Gujarati font: ‘ખાસ ઓફર: 10% ડિસ્કાઉન્ટ!’ (#80401D). Below, ‘Patrakar Heights’ in bold sans-serif English font (#80401D). Subheading: ‘Book Now & Save Big!’ (#80401D). Left-side illustration: Happy family in a luxury apartment (#80401D, #C15C1F, pastel accents). Bottom tagline: ‘ઓફર સમય મર્યાદિત!’ (#80401D). Bottom banner (#C15C1F): ‘Say ‘Hi’ to us on WhatsApp: +91 81550 99930’ (white, green WhatsApp icon) and ‘Naranpura, Ahmedabad’ (white, pink location pin).\"\n\nAdditional Guidelines\n\nBilingual Text: Headlines and taglines in Gujarati, subheadings in English.  \nProject Details: Include highlights (e.g., \"Near Adani CNG, Pragatinagar\", \"Luxury Lifestyle\") as appropriate.  \nConsistency: Maintain layout, colors, font styles, and logo placement across all posts.  \nDatabase Integration: Fetch [Samyag_Logo] and [Patrakar_Heights_Logo] from the database.  \nOutput: Provide a textual image description for the GPT API, to be processed for image generation.\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.9,
+        "position": [
+          -896,
+          224
+        ],
+        "id": "bfd1bc18-6d14-4cec-bb6a-6ef186ea6a20",
+        "name": "Image Prompt"
+      },
+      {
+        "parameters": {
+          "content": "# Image Prompt\n",
+          "height": 240,
+          "width": 360,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -928,
+          144
+        ],
+        "id": "04780cdf-8247-4163-a7d8-4d13bd5ddabc",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "# Trigger\n",
+          "height": 240,
+          "width": 260,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1664,
+          176
+        ],
+        "id": "64ddcbdf-081f-4dce-9392-559fc53aaff8",
+        "name": "Sticky Note5",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "content": "# Generate Image\n",
+          "height": 240,
+          "width": 400,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -448,
+          144
+        ],
+        "id": "e4dc412a-ed85-49ba-acb1-9b5e9a55313f",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -960,
+          480
+        ],
+        "id": "b7efece6-4d0c-42b5-bac3-2f6a0dde57bb",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "Ddfo9AUPsRLfLoPC",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4d01e845-15d2-4244-937c-2b2de1884c55",
+                "name": "samyag_logo",
+                "value": "https://drive.google.com/uc?export=download&id=12NsdL85IFWpocMAvkX2IqoiihTNuH0C0",
+                "type": "string"
+              },
+              {
+                "id": "c266833b-e929-4193-8155-29bdbfd29bb0",
+                "name": "Patekar_heights_logo",
+                "value": "https://drive.google.com/uc?export=download&id=1nFlzfCR3lKFkqVxpQ7biRbW6MC-729_1",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -1248,
+          240
+        ],
+        "id": "9c290f10-df25-4fc6-8906-cb38b38aed72",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1584,
+          240
+        ],
+        "id": "cbf04a8e-5c0d-4501-b5a0-bfec94a26220",
+        "name": "Telegram Trigger",
+        "webhookId": "5148bb0b-d106-481f-b52e-8e0dc3504984",
+        "credentials": {
+          "telegramApi": {
+            "id": "G4ITix2NuI4akcOv",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "sendPhoto",
+          "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+          "binaryData": true,
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          304,
+          224
+        ],
+        "id": "31bfbaca-b4ca-4b39-b1a1-f70006a5097b",
+        "name": "Send a photo message",
+        "webhookId": "e8b521dc-bfb2-4038-bcbf-efff7f5b8949",
+        "credentials": {
+          "telegramApi": {
+            "id": "G4ITix2NuI4akcOv",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Model",
+          "height": 180,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1040,
+          432
+        ],
+        "id": "f6f5027b-e43b-4f1d-ba52-5163074e3a5d",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "# Write to Drive & Sheets",
+          "height": 240,
+          "width": 540,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          128,
+          160
+        ],
+        "id": "41d9903c-ee85-4e0c-9129-2cfe92ac5a1c",
+        "name": "Sticky Note6"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Generate Image": {
+        "main": [
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image Prompt": {
+        "main": [
+          [
+            {
+              "node": "Generate Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Send a photo message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Image Prompt",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Image Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "22fcb342-3c62-4376-859d-030f1925f2b5",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "275dfcf71777265c6d0059bd864abdb0960e4192cdeb97d274873408496b6a7b"
+    },
+    "id": "5w8gd6vrXdzqyIPg",
+    "tags": []
+  }
